@@ -1,1 +1,116 @@
-https://github.com/hapsaai-web/context-understanding
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LingoBuddy - Multi Language 🌈</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Quicksand', sans-serif; 
+            background: #e0f2fe; /* Warna biru muda pastel */
+            background-image: radial-gradient(#ffffff 15%, transparent 15%), radial-gradient(#ffffff 15%, transparent 15%);
+            background-position: 0 0, 25px 25px;
+            background-size: 50px 50px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.98);
+            border: 4px solid #bae6fd;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+        }
+        .btn-magic {
+            background: linear-gradient(135deg, #fb7185, #e11d48);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .btn-magic:hover { transform: scale(1.03); }
+    </style>
+</head>
+<body class="p-4">
+
+    <div class="max-w-md w-full card rounded-[40px] overflow-hidden p-8">
+        <div class="text-center mb-6">
+            <h1 class="text-3xl font-bold text-blue-600">LingoBuddy 🌍</h1>
+            <p class="text-gray-500 font-medium">Beda lawan bicara, beda gaya!</p>
+        </div>
+
+        <div class="space-y-5">
+            <div>
+                <label class="block text-gray-700 font-bold mb-2 ml-1">Pilih Mode Bahasa: ✨</label>
+                <select id="mode" class="w-full p-4 rounded-2xl border-2 border-blue-100 outline-none focus:ring-4 focus:ring-blue-50 bg-white text-gray-700 font-semibold cursor-pointer">
+                    <option value="guru">👨‍🏫 Guru (Formal Indo)</option>
+                    <option value="teman">🥳 Teman (Santai Indo)</option>
+                    <option value="english">🇬🇧 English (Formal & Polite)</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-gray-700 font-bold mb-2 ml-1">Ketik di sini: ✍️</label>
+                <textarea id="textInput" rows="3" class="w-full p-5 rounded-3xl border-2 border-gray-100 outline-none focus:ring-4 focus:ring-pink-50 placeholder-gray-300 shadow-sm" placeholder="Contoh: gue mau izin ke kamar mandi..."></textarea>
+            </div>
+
+            <button onclick="prosesBahasa()" class="btn-magic w-full py-4 text-white font-black text-lg rounded-2xl shadow-lg">
+                TRANSFORM! ✨
+            </button>
+
+            <div id="resultArea" class="hidden animate-in fade-in zoom-in duration-300">
+                <div class="bg-blue-50 border-2 border-blue-200 p-6 rounded-3xl relative">
+                    <span class="absolute -top-3 left-4 bg-blue-500 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase">Hasil Konversi</span>
+                    <p id="resultText" class="text-blue-900 font-bold text-lg"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function prosesBahasa() {
+            const input = document.getElementById('textInput').value.toLowerCase();
+            const mode = document.getElementById('mode').value;
+            let result = input;
+
+            if (!input.trim()) return alert("Jangan dikosongin ya manis! 😊");
+
+            // Kamus kata dasar
+            const vocab = {
+                "gue": { guru: "saya", teman: "gue", english: "I" },
+                "aku": { guru: "saya", teman: "aku", english: "I" },
+                "kantin": { guru: "kantin", teman: "kantin", english: "canteen" },
+                "kamar mandi": { guru: "toilet", teman: "wc", english: "restroom" },
+                "toilet": { guru: "toilet", teman: "wc", english: "restroom" },
+                "mau": { guru: "ingin", teman: "mau", english: "would like to" }
+            };
+
+            // Ganti kata dasar
+            for (let word in vocab) {
+                let regex = new RegExp("\\b" + word + "\\b", "g");
+                result = result.replace(regex, vocab[word][mode]);
+            }
+
+            // Logika Kalimat Berdasarkan Mode
+            if (mode === "guru") {
+                if (result.includes("toilet")) result = "Mohon maaf Bapak/Ibu, izin saya ingin pergi ke toilet sebentar.";
+                else if (result.includes("kantin")) result = "Mohon maaf Bapak/Ibu, jika diperbolehkan saya izin ke kantin.";
+                else result = "Mohon maaf Bapak/Ibu, " + result;
+            } 
+            else if (mode === "teman") {
+                result = result + " ya, ditungguin lho! ✌️";
+            } 
+            else if (mode === "english") {
+                if (result.includes("restroom")) result = "Excuse me, may I go to the restroom, please? 🚽";
+                else if (result.includes("canteen")) result = "Excuse me, I would like to go to the canteen for a moment.";
+                else result = "Excuse me, " + result + ".";
+            }
+
+            // Tampilkan
+            const area = document.getElementById('resultArea');
+            const txt = document.getElementById('resultText');
+            area.classList.remove('hidden');
+            txt.innerText = result.charAt(0).toUpperCase() + result.slice(1);
+        }
+    </script>
+</body>
+</html>
